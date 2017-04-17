@@ -22,6 +22,10 @@ contract Match {
 
   function askForMatch(uint n){
     nodeId=n;
+    //clear the array from previous query
+    //while (matches.length>1){
+      //delete matches[matches.length-1];
+  //  }
     query(msg.sender, n);
     //Comp memory myComp = Comp (0,0);
     //matches[0]= myComp;
@@ -31,13 +35,16 @@ contract Match {
   function addMatch(uint h, uint s)
   {
     matches.push(Comp(h, s));
+    //matches[client]=(Comp(h,s));
     matchAdded(msg.sender, h, s);
     //matches[numberOfMatches] = Comp(h, s);
     //numberOfMatches++;
-    if (matches.length>9){
-      matchesFull();
+    if (matches.length>1){
+      //if (numberOfMatches>8){
+        matchesFull();
       //bubbleSort();
     }
+    //return numberOfMatches;
   }
 
   function bubbleSort()

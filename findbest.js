@@ -62,16 +62,23 @@ function getClientNumber(){
     setProv(answer);
 
     if (answer==1){
-      runTests();
+      //runTests();
+      sendQuery();
       var listFull =myContract.matchesFull();
+      //for(var j=0; j>10; j++){
       //var matchAddedToList = myContract.matchAdded();
       //matchAddedToList.watch(function(err, result){
         listFull.watch(function(err, result){
         //console.log("This account added a match: " + result.args.sender);
-        console.log("The list is full!");
+        sendQuery();
+        //console.log("The list is full!");
         return;
+
         //matchAddedToList.stopWatching();
       })
+      //listFull.stopWatching();
+    //}
+
     }
 
     else {
@@ -82,12 +89,13 @@ function getClientNumber(){
           return;
         }
         else {
+
           console.log("Account: " + result.args.sender + " just asked about node: " + result.args.node);
-          matchingAlgo(result.args.node);
+          var list = matchingAlgo(result.args.node);
+          var nr= myContract.addMatch(list[0], list[1], 2000000, {from: web3.eth.accounts[0]});
           //TODO: Is return correct in this context?
           return;
-          //TODO: find out how and when to stop watching for a query
-          matchRequested.stopWatching();
+          //matchRequested.stopWatching();
         }
       });
     }
@@ -132,11 +140,11 @@ function matchingAlgo(number){
   }
 
   if (answer2!=0){
-    console.log("answer 1: "+ answer1 + " and answer 2: " + answer2);
+    console.log("answer 1: " + answer1 + " and answer 2: " + answer2);
     node_exists=true
-    var hej = myContract.addMatch(answer1, answer2, 2000000, {from: web3.eth.accounts[0]});
-    console.log("Hash receipt: " + hej);
-    console.log("Length of the list of numbers: " + myContract.getLengthOfMatches.call());
+    //var hej = myContract.addMatch(answer1, answer2, 2000000, {from: web3.eth.accounts[0]});
+    var answers = [answer1, answer2];
+    return answers;
   }
 
   else console.log("that node does not exist!");
