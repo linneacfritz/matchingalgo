@@ -18,33 +18,35 @@ contract Match {
 
   event query (address sender, uint node);
   event matchAdded (address sender, uint hardware, uint software);
-  event matchesFull ();
+  event matchesFull (address sender);
 
-  function askForMatch(uint n){
+  function askForMatch(uint n) {
     nodeId=n;
+
     //clear the array from previous query
-    //while (matches.length>1){
-      //delete matches[matches.length-1];
-  //  }
+    if (matches.length>0){
+      uint i = matches.length;
+      for (uint j = 0; j<i; j++){
+          delete matches[i-1];
+          i--;
+      }
+    }
+    //while (matches.length>0){
+    //  delete matches[matches.length-1];
+    //}
     query(msg.sender, n);
-    //Comp memory myComp = Comp (0,0);
-    //matches[0]= myComp;
-    //numberOfMatches=0;
   }
 
   function addMatch(uint h, uint s)
   {
     matches.push(Comp(h, s));
-    //matches[client]=(Comp(h,s));
     matchAdded(msg.sender, h, s);
-    //matches[numberOfMatches] = Comp(h, s);
-    //numberOfMatches++;
-    if (matches.length>1){
-      //if (numberOfMatches>8){
-        matchesFull();
+    //if (matches.length>2){
+
+      //  matchesFull(msg.sender);
       //bubbleSort();
-    }
-    //return numberOfMatches;
+    //}
+
   }
 
   function bubbleSort()

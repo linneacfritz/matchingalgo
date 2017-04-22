@@ -21,6 +21,7 @@ var myContract = contract.at(contractAddress);
 var workbook;
 var sheet_name_list;
 var node_exists = true;
+var counter =0;
 
 
 module.exports = function(callback) {};
@@ -47,9 +48,9 @@ function runTests(){
 }
 
 function sendQuery(){
+  //counter=0;
   var nodeIdToAskAbout=randomId();
   console.log("asking about node: " + nodeIdToAskAbout);
-
   myContract.askForMatch(nodeIdToAskAbout, 2000000, {from: web3.eth.accounts[0]});
 }
 
@@ -62,94 +63,104 @@ function getClientNumber(){
     setProv(answer);
 
     if (answer==1){
-      //runTests();
       sendQuery();
-      var listFull =myContract.matchesFull();
-      //for(var j=0; j>10; j++){
-      //var matchAddedToList = myContract.matchAdded();
-      //matchAddedToList.watch(function(err, result){
-        listFull.watch(function(err, result){
-        //console.log("This account added a match: " + result.args.sender);
-        sendQuery();
+      //var listFull =myContract.matchesFull();
+      //var h = myContract.askForMatch(randomId(), 2000000, {from: web3.eth.accounts[0]});
+      //console.log("h: " + h);
+      var matchAddedToList = myContract.matchAdded();
+      //for(var j=0; j<3; j++){
+
+        matchAddedToList.watch(function(err, result){
+          //listFull.watch(function(err, result){
+          console.log("This account has added a match: " + result.args.sender);
+          counter++;
+          console.log("counter: " + counter);
+        //})}
+        if (counter==2){
+          counter=0;
+
+        sendQuery()
+      }
         //console.log("The list is full!");
         return;
 
         //matchAddedToList.stopWatching();
-      })
-      //listFull.stopWatching();
-    //}
+            })
+        //listFull.stopWatching();
+        //}
+      }
 
-    }
+      
 
-    else {
-      var matchRequested = myContract.query();
-      matchRequested.watch(function(err, result) {
-        if (err) {
-          console.log(err)
-          return;
-        }
-        else {
+      else {
+        var matchRequested = myContract.query();
+        matchRequested.watch(function(err, result) {
+          if (err) {
+            console.log(err)
+            return;
+          }
+          else {
 
-          console.log("Account: " + result.args.sender + " just asked about node: " + result.args.node);
-          var list = matchingAlgo(result.args.node);
-          var nr= myContract.addMatch(list[0], list[1], 2000000, {from: web3.eth.accounts[0]});
-          //TODO: Is return correct in this context?
-          return;
-          //matchRequested.stopWatching();
-        }
-      });
-    }
-    rl.close();
-  });
-}
-
-function setProv(cN){
-  web3.setProvider(new web3.providers.HttpProvider(ports[cN-1]));
-}
-
-
-function createWorkBook(){
-  if (typeof require !== 'undefined') XLSX = require('/usr/lib/node_modules/xlsx');
-  workbook = XLSX.readFile('/home/linnea/matchings/out.ods');
-  sheet_name_list = workbook.SheetNames;
-}
-
-function table(id, sheet_number){
-  //this needs to be hardcoded to avoid extra computations
-  var worksheet = workbook.Sheets[sheet_name_list[sheet_number]];
-  var range = worksheet['!ref'];
-  var myRange = XLSX.utils.decode_range(range);
-  var end = myRange.e.r;
-  for(var i=1; i<=end; i++){
-    var row = 'A'+i;
-    var value = worksheet[row].v;
-    if(value == id){
-      console.log("value: " + value);
-      return (worksheet['B'+i].v);
-    }
-  }
-  return 0;
-}
-
-function matchingAlgo(number){
-  var answer1 = table(number, 0);
-  var answer2=0;
-
-  if (answer1!=0){
-    answer2=table(answer1, 1);
+            console.log("Account: " + result.args.sender + " just asked about node: " + result.args.node);
+            var list = matchingAlgo(result.args.node);
+            var nr= myContract.addMatch(list[0], list[1], 2000000, {from: web3.eth.accounts[0]});
+            //TODO: Is return correct in this context?
+            return;
+            //matchRequested.stopWatching();
+          }
+        });
+      }
+      rl.close();
+    });
   }
 
-  if (answer2!=0){
-    console.log("answer 1: " + answer1 + " and answer 2: " + answer2);
-    node_exists=true
-    //var hej = myContract.addMatch(answer1, answer2, 2000000, {from: web3.eth.accounts[0]});
-    var answers = [answer1, answer2];
-    return answers;
+  function setProv(cN){
+    web3.setProvider(new web3.providers.HttpProvider(ports[cN-1]));
   }
 
-  else console.log("that node does not exist!");
-};
 
-function getInfo(){
-  console.log("Length of the list of numbers: " + myContract.lengthOfMatchList.call());
-}
+  function createWorkBook(){
+    if (typeof require !== 'undefined') XLSX = require('/usr/lib/node_modules/xlsx');
+    workbook = XLSX.readFile('/home/linnea/matchings/out.ods');
+    sheet_name_list = workbook.SheetNames;
+  }
+
+  function table(id, sheet_number){
+    //this needs to be hardcoded to avoid extra computations
+    var worksheet = workbook.Sheets[sheet_name_list[sheet_number]];
+    var range = worksheet['!ref'];
+    var myRange = XLSX.utils.decode_range(range);
+    var end = myRange.e.r;
+    for(var i=1; i<=end; i++){
+      var row = 'A'+i;
+      var value = worksheet[row].v;
+      if(value == id){
+        console.log("value: " + value);
+        return (worksheet['B'+i].v);
+      }
+    }
+    return 0;
+  }
+
+  function matchingAlgo(number){
+    var answer1 = table(number, 0);
+    var answer2=0;
+
+    if (answer1!=0){
+      answer2=table(answer1, 1);
+    }
+
+    if (answer2!=0){
+      console.log("answer 1: " + answer1 + " and answer 2: " + answer2);
+      node_exists=true
+      //var hej = myContract.addMatch(answer1, answer2, 2000000, {from: web3.eth.accounts[0]});
+      var answers = [answer1, answer2];
+      return answers;
+    }
+
+    else console.log("that node does not exist!");
+  };
+
+  function getInfo(){
+    console.log("Length of the list of numbers: " + myContract.lengthOfMatchList.call());
+  }
