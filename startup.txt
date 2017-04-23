@@ -1,0 +1,28 @@
+geth --unlock 0 --datadir "/home/linnea/nodes/node3" --networkid 2017 --nodiscover --rpcport 8546 --rpc --port 30304 --verbosity 2 --minerthreads 1 --ipcpath "/home/linnea/nodes/node3/geth.ipc" --init Gen.json console
+
+geth --unlock 0 --datadir "/home/linnea/nodes/node3" --networkid 2017 --nodiscover --rpcport 8546 --rpc --port 30304 --verbosity 2 --minerthreads 1 --ipcpath "/home/linnea/nodes/node3/geth.ipc" --init Gen.json console
+
+
+
+
+
+
+geth --identity "MyNodeName" --genesis CustomGenesis.json --rpc --rpcport "8000" --rpccorsdomain "*" --datadir "C:\chains\VPSChain" --port "30303" --nodiscover --ipcapi "admin,db,eth,debug,miner,net,shh,txpool,personal,web3" --rpcapi "db,eth,net,web3" --autodag --networkid 1900 --nat "any" console
+
+
+ANVÄND nedanstående :)
+
+geth --unlock 0 --rpc --rpcport 8545 --rpccorsdomain "*" --datadir "/home/linnea/nodes/node1" --port "30303" --nodiscover --ipcapi "admin,db,eth,debug,miner,net,shh,txpool,personal,web3" --rpcapi "db,eth,net,web3" --autodag --networkid 2017 --nat "any" --verbosity 2 init "/home/linnea/nodes/node1/Gen.json" console
+
+geth --unlock 0 --rpc --rpcport 8546 --rpccorsdomain "*" --datadir "/home/linnea/nodes/node2" --port "30304" --nodiscover --ipcapi "admin,db,eth,debug,miner,net,shh,txpool,personal,web3" --rpcapi "db,eth,net,web3" --autodag --networkid 2017 --nat "any" init "/home/linnea/nodes/node2/Gen.json" console
+
+geth --unlock 0 --rpc --rpcport 8545 --rpccorsdomain "*" --datadir "/home/linnea/nodes/node1" --port "30303" --nodiscover --ipcapi "admin,db,eth,debug,miner,net,shh,txpool,personal,web3" --rpcapi "db,eth,net,web3" --autodag --networkid 2017 --nat "any" --verbosity 2 console
+
+geth --unlock 0 --rpc --rpcport 8546 --rpccorsdomain "*" --datadir "/home/linnea/nodes/node2" --port "30304" --nodiscover --ipcapi "admin,db,eth,debug,miner,net,shh,txpool,personal,web3" --rpcapi "db,eth,net,web3" --autodag --networkid 2017 --nat "any" --verbosity 2 console
+
+geth --unlock 0 --rpc --rpcport 8547 --rpccorsdomain "*" --datadir "/home/linnea/nodes/node3" --port "30305" --nodiscover --ipcapi "admin,db,eth,debug,miner,net,shh,txpool,personal,web3" --rpcapi "db,eth,net,web3" --autodag --networkid 2017 --nat "any" --verbosity 2 console
+
+geth --unlock 0 --rpc --rpcport 8548 --rpccorsdomain "*" --datadir "/home/linnea/nodes/node4" --port "30306" --nodiscover --ipcapi "admin,db,eth,debug,miner,net,shh,txpool,personal,web3" --rpcapi "db,eth,net,web3" --autodag --networkid 2017 --nat "any" --verbosity 2 console
+
+
+geth --rpc --rpcport 8548 --rpccorsdomain "*" --datadir "/home/linnea/nodes/node4" --port "30306" --nodiscover --ipcapi "admin,db,eth,debug,miner,net,shh,txpool,personal,web3" --rpcapi "db,eth,net,web3" --autodag --networkid 2017 --nat "any" --verbosity 2 init "/home/linnea/nodes/node4/Gen.json" console
