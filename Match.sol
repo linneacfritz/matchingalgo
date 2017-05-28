@@ -17,50 +17,37 @@ contract Match {
   }
 
   event query (address sender, uint node);
-  event matchAdded (address sender, uint hardware, uint software);
-  event matchesFull (address sender);
+  event answerFound(uint software);
 
-  function askForMatch(uint n) {
+  function askForMatch(uint n){
     nodeId=n;
-
-    //clear the array from previous query
-    if (matches.length>0){
-      uint i = matches.length;
-      for (uint j = 0; j<i; j++){
-          delete matches[i-1];
-          i--;
-      }
-    }
-    //while (matches.length>0){
-    //  delete matches[matches.length-1];
-    //}
+    clearArray();
     query(msg.sender, n);
   }
 
   function addMatch(uint h, uint s)
   {
     matches.push(Comp(h, s));
-    matchAdded(msg.sender, h, s);
-    //if (matches.length>2){
-
-      //  matchesFull(msg.sender);
-      //bubbleSort();
-    //}
-
+    if (matches.length==3){
+      bubbleSort();
+    }
   }
 
   function bubbleSort()
   {
-    for (uint j=0; j<9; j++)
-    {
-      for (uint i = j; i<9; i++)
-      {
-        if (matches[i].software > matches[i+1].software)
+    uint n = matches.length;
+    while (n>0){
+      uint v = 0;
+      for (uint i=1; i<= (n-1); i++){
+        if (matches[i-1].software>matches[i].software)
         {
-          swap(i, i+1);
+          swap(i-1, i);
+          v=i;
         }
       }
+      n=v;
     }
+    findBest();
   }
 
   function swap(uint index1, uint index2)
@@ -70,34 +57,45 @@ contract Match {
     matches[index2] = temp;
   }
 
-  function findBest(uint index, uint b) returns (uint){
-    if (index >= matches.length-1){
-      return b;
+  function findBest() returns(uint)
+  {
+    uint count = 1;
+    uint tempCount;
+    uint popular = matches[0].software;
+    uint temp = 0;
+    for (uint i = 0; i < (matches.length - 1); i++)
+    {
+      temp = matches[i].software;
+      tempCount = 0;
+      for (uint j = 1; j < matches.length; j++)
+      {
+        if (temp == matches[j].software)
+          tempCount++;
+      }
+      if (tempCount > count)
+      {
+        popular = temp;
+        count = tempCount;
+      }
     }
-    uint tracker=1;
-    while (matches[index].software == matches[index+1].software){
-      tracker++;
-      index++;
-    }
-    if (tracker > b){
-      findBest(index+1, tracker);
-    }
-    else {
-      findBest(index+1, b);
-    }
+    answerFound(popular);
+    return popular;
   }
 
 
-  function getLast() constant returns (uint, uint){
-    uint last=matches.length-1;
-    return (matches[last].hardware, matches[last].software);
-  }
+    function getMatch(uint n) constant returns (uint, uint){
+      return (matches[n].hardware, matches[n].software);
+    }
 
-  function getMatch(uint n) constant returns (uint, uint){
-    return (matches[n].hardware, matches[n].software);
-  }
+    function getLengthOfMatches() constant returns (uint){
+      return matches.length;
+    }
 
-  function getLengthOfMatches() constant returns (uint){
-    return matches.length;
+    function clearArray(){
+      delete matches;
+    }
+
+    function getNumber() returns (uint){
+      return 42;
+    }
   }
-}
